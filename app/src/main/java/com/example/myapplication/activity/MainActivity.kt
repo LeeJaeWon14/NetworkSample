@@ -1,37 +1,36 @@
 package com.example.myapplication.activity
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.ConnectivityManager
-import android.net.LinkProperties
-import android.net.Network
-import android.net.NetworkCapabilities
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import com.example.myapplication.ServerService
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.network.JsonPlaceDTO
 import com.example.myapplication.network.RestService
 import com.example.myapplication.network.RetroClient
 import com.example.myapplication.util.MyLogger
-import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : BaseActivity() {
     private lateinit var binding : ActivityMainBinding
+    private var serviceIntent: Intent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        MyLogger.e("This name is $componentName / ${this.javaClass.simpleName} / ${this.javaClass.name}")
 
+        serviceIntent = Intent(applicationContext, ServerService::class.java)
+        binding.btnService.setOnClickListener {
+            // start Socket server service
+            startService(serviceIntent)
+        }
         binding.btnTest.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val service = RetroClient.getInstance().create(RestService::class.java)
@@ -59,5 +58,14 @@ class MainActivity : BaseActivity() {
                 })
             }
         }
+
+        binding.btnSocket.setOnClickListener {
+            startActivity(Intent(this, SocketActivity::class.java))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(serviceIntent)
     }
 }

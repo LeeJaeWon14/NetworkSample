@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
@@ -7,11 +8,13 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.ServerService
 import com.example.myapplication.util.MyLogger
 
 open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         //get default network state now for app
         val connectivityManager = getSystemService(ConnectivityManager::class.java)
